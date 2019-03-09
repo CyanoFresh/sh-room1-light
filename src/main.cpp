@@ -5,7 +5,7 @@
 #define WIFI_SSID "Solomaha"
 #define WIFI_PASSWORD "solomakha21"
 
-#define MQTT_HOST IPAddress(192, 168, 1, 76)
+#define MQTT_HOST IPAddress(192, 168, 1, 230)
 #define MQTT_PORT 1883
 #define MQTT_ID "room1-light"
 #define MQTT_PASSWORD "sdfnkjhdhjkvcfhjkvsdhjk324bkwerfsdw23r2345"
@@ -45,6 +45,10 @@ void onMqttConnect(bool) {
 
     // Subscribe to topics:
     mqttClient.subscribe("switch/room1-light/set", 0);
+    mqttClient.subscribe("device/room1-light", 0);
+
+    // Send initial state
+    mqttClient.publish("switch/room1-light", 0, false, digitalRead(relayPin) == HIGH ? "false" : "true");
 }
 
 void onMqttDisconnect(AsyncMqttClientDisconnectReason reason) {
@@ -59,18 +63,17 @@ void onMqttDisconnect(AsyncMqttClientDisconnectReason reason) {
 void onMqttMessage(char *topic, char *payload,
                    AsyncMqttClientMessageProperties properties, size_t len,
                    size_t index, size_t total) {
-    if (strcmp(topic, "switch/room1-light/set") == 0) {
-        if (strcmp(payload, "{\"state\":true}") == 0) {
-            digitalWrite(relayPin, 0);  // Turn on
-        } else if (strcmp(payload, "{\"state\":false}") == 0) {
-            digitalWrite(relayPin, 1);  // Turn off
-        } else {
-            Serial.println("Unknown payload:");
-            Serial.println(payload);
-        }
+    char data[len + 1];
+    data[len] = '\0';
+    strncpy(data, payload, len);
 
-        mqttClient.publish("switch/room1-light", 0, false, payload);
+    if (strcmp(data, "true") == 0) {
+        digitalWrite(relayPin, 0);  // Turn on
+    } else {
+        digitalWrite(relayPin, 1);  // Turn off
     }
+
+    mqttClient.publish("switch/room1-light", 0, false, data);
 }
 
 void setup() {
