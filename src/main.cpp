@@ -3,13 +3,13 @@
 #include <Ticker.h>
 #include <EEPROM.h>
 
-#define WIFI_SSID "Solomaha"
-#define WIFI_PASSWORD "solomakha21"
+#define WIFI_SSID "SSID"
+#define WIFI_PASSWORD "secret"
 
 #define MQTT_HOST IPAddress(192, 168, 1, 230)
 #define MQTT_PORT 1883
 #define MQTT_ID "room1-light"
-#define MQTT_PASSWORD "sdfnkjhdhjkvcfhjkvsdhjk324bkwerfsdw23r2345"
+#define MQTT_PASSWORD "dfghsjkjhkfsdjhksdfhjksdfhjksdfsdf"
 
 AsyncMqttClient mqttClient;
 Ticker mqttReconnectTimer;
